@@ -2,7 +2,7 @@
 name = "Bonk!"
 author = "MisfitMaid"
 category = "Audio"
-version = "0.1"
+version = "1.0"
 siteid = 314
 
 [script]
