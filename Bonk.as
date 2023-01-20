@@ -27,12 +27,19 @@ float prev_speed = 0;
 uint64 lastBonk = 0;
 void step() {
 	if (VehicleState::GetViewingPlayer() is null) return;
-	CSceneVehicleVisState@ vis = VehicleState::GetVis(GetApp().GameScene, VehicleState::GetViewingPlayer()).AsyncState;
+	CSceneVehicleVisState@ vis = VehicleState::ViewingPlayerState();
 	
-	if (vis.RaceStartTime == 0xFFFFFFFF) { // in pre-race mode
+#if TMNEXT
+  	if (vis.RaceStartTime == 0xFFFFFFFF) { // in pre-race mode
 		prev_speed = 0;
 		lastBonk == Time::Now;
 	}
+#elif MP4||TURBO
+  	if (vis.FrontSpeed == 0) { // in pre-race mode hopefully
+		prev_speed = 0;
+		lastBonk == Time::Now;
+	}
+#endif
 	
 	float speed = vis.FrontSpeed;
 	float curr_acc;
