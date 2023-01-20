@@ -54,7 +54,7 @@ void step() {
 		speed *= -1.f;
 		curr_acc *= -1.f;
 	}
-	if (curr_acc < (bonkThresh*-1.f)) bonk(curr_acc);
+	if (curr_acc < (bonkThresh*-1.f) && !vis.InputIsBraking) bonk(curr_acc);
 }
 
 void bonk(const float &in curr_acc) {
