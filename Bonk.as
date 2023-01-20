@@ -1,14 +1,14 @@
-[Setting min=0 max=100]
-float bonkThresh = 64.f;
-
-[Setting min=0]
-uint bonkDebounce = 1000;
-
-[Setting]
+[Setting name="Enable Bonk! sound effect"]
 bool enableBonkSound = true;
 
-[Setting min=0 max=1]
-float bonkSoundGain = 1.0f;
+[Setting min=0 max=100 name="Bonk threshold" description="How sensitive the Bonk! detection is. If you get many false positives, increase this value."]
+float bonkThresh = 64.f;
+
+[Setting min=0 max=60000 name="Bonk debounce" description="Length (in ms) to cool down before making additional Bonk! sounds."]
+uint bonkDebounce = 5000;
+
+[Setting min=0 max=1 name="Bonk! volume"]
+float bonkSoundGain = 0.4f;
 
 void Main() {
 	init();
