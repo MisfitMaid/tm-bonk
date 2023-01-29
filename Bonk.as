@@ -41,7 +41,7 @@ void step() {
 	}
 #endif
 	
-	float speed = vis.FrontSpeed;
+	float speed = getSpeed(vis);
 	float curr_acc;
 	try {
 		curr_acc = ((speed - prev_speed) / (g_dt/1000));
@@ -54,7 +54,7 @@ void step() {
 		speed *= -1.f;
 		curr_acc *= -1.f;
 	}
-	if (curr_acc < (bonkThresh*-1.f) && !vis.InputIsBraking) bonk(curr_acc);
+	if (curr_acc < (bonkThresh*-1.f) && !vis.IsTurbo && !vis.InputIsBraking) bonk(curr_acc);
 }
 
 void bonk(const float &in curr_acc) {
@@ -70,4 +70,8 @@ float g_dt = 0;
 void Update(float dt)
 {
 	g_dt = dt;
+}
+
+float getSpeed(CSceneVehicleVisState@ vis) {
+	return Math::Distance(vec3(0,0,0), vis.WorldVel);
 }
