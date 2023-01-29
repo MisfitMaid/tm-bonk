@@ -101,3 +101,7 @@ void Render() {
     nvg::Fill();
     nvg::ClosePath();
 }
+
+uint64 lastBonkTime() {
+	return lastBonk;
+}

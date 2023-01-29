@@ -7,3 +7,5 @@ siteid = 314
 
 [script]
 dependencies = ["VehicleState"]
+exports = [ "Export.as" ]
+module = "bonk"
