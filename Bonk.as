@@ -57,7 +57,11 @@ void step() {
 		speed *= -1.f;
 		curr_acc *= -1.f;
 	}
+#if TMNEXT
 	if (curr_acc < (bonkThresh*-1.f) && !vis.IsTurbo && !vis.InputIsBraking) bonk(curr_acc);
+#elif MP4||TURBO
+	if (curr_acc < (bonkThresh*-1.f) && !vis.InputIsBraking) bonk(curr_acc); // IsTurbo not reported by VehicleState wrapper
+#endif
 }
 
 void bonk(const float &in curr_acc) {
