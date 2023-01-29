@@ -94,6 +94,7 @@ void startBonkFlash() {
 }
 
 void Render() {
+	if (!enableBonkFlash) return;
 	if (lastBonkFlash + 400 < Time::Now) return;
 
 	float w = float(Draw::GetWidth());
