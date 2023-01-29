@@ -81,7 +81,11 @@ void Update(float dt)
 }
 
 float getSpeed(CSceneVehicleVisState@ vis) {
+#if TMNEXT||TURBO
 	return Math::Distance(vec3(0,0,0), vis.WorldVel);
+#elif MP4
+	return vis.FrontSpeed;
+#endif
 }
 
 uint lastBonkFlash = 0;
