@@ -8,7 +8,7 @@ bool enableBonkFlash = true;
 float bonkThresh = 64.f;
 
 [Setting min=0 max=60000 name="Bonk debounce" description="Length (in ms) to cool down before making additional Bonk! sounds."]
-uint bonkDebounce = 5000;
+uint bonkDebounce = 500;
 
 [Setting min=0 max=1 name="Bonk! volume"]
 float bonkSoundGain = 0.4f;
@@ -28,6 +28,10 @@ void init() {
 
 float prev_speed = 0;
 uint64 lastBonk = 0;
+
+float bonkTargetThresh = 0.f;
+float detectedBonkVal = 0.f;
+
 void step() {
 	if (VehicleState::GetViewingPlayer() is null) return;
 	CSceneVehicleVisState@ vis = VehicleState::ViewingPlayerState();
@@ -51,7 +55,7 @@ void step() {
 	float speed = getSpeed(vis);
 	float curr_acc;
 	try {
-		curr_acc = ((speed - prev_speed) / (g_dt/1000));
+		curr_acc = Math::Max(0, (prev_speed - speed) / (g_dt/1000));
 	} catch {
 		curr_acc = 0;
 	}
@@ -61,14 +65,18 @@ void step() {
 		speed *= -1.f;
 		curr_acc *= -1.f;
 	}
+	bonkTargetThresh = (bonkThresh + prev_speed * 1.5f);
+	bool mainBonkDetect = curr_acc > bonkTargetThresh;
 #if TMNEXT
-	if (curr_acc < (bonkThresh*-1.f) && !vis.IsTurbo && !vis.InputIsBraking) bonk(curr_acc);
+	if (mainBonkDetect && !vis.IsTurbo) bonk(curr_acc);
 #elif MP4||TURBO
-	if (curr_acc < (bonkThresh*-1.f) && !vis.InputIsBraking) bonk(curr_acc); // IsTurbo not reported by VehicleState wrapper
+	if (mainBonkDetect) bonk(curr_acc); // IsTurbo not reported by VehicleState wrapper
 #endif
 }
 
 void bonk(const float &in curr_acc) {
+	detectedBonkVal = curr_acc;
+	trace("DETECTED BONK @ " + Text::Format("%f", detectedBonkVal));
 	if ((lastBonk + bonkDebounce) > Time::Now) return;
 	
 	lastBonk = Time::Now;
@@ -86,7 +94,7 @@ void Update(float dt)
 
 float getSpeed(CSceneVehicleVisState@ vis) {
 #if TMNEXT||TURBO
-	return Math::Distance(vec3(0,0,0), vis.WorldVel);
+	return vis.WorldVel.Length();
 #elif MP4
 	return vis.FrontSpeed;
 #endif
@@ -117,4 +125,12 @@ void Render() {
 
 uint64 lastBonkTime() {
 	return lastBonk;
+}
+
+float lastBonkScore() {
+	return detectedBonkVal;
+}
+
+float currentBonkThreshold() {
+	return bonkTargetThresh;
 }
