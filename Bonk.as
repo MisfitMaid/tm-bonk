@@ -31,6 +31,7 @@ uint64 lastBonk = 0;
 void step() {
 	if (VehicleState::GetViewingPlayer() is null) return;
 	CSceneVehicleVisState@ vis = VehicleState::ViewingPlayerState();
+	if (vis is null) return;
 	
 #if TMNEXT
   	if (vis.RaceStartTime == 0xFFFFFFFF) { // in pre-race mode
