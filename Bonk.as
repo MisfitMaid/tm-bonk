@@ -32,6 +32,9 @@ void step() {
 	if (VehicleState::GetViewingPlayer() is null) return;
 	CSceneVehicleVisState@ vis = VehicleState::ViewingPlayerState();
 	if (vis is null) return;
+
+	if (GetApp().CurrentPlayground is null || (GetApp().CurrentPlayground.UIConfigs.Length < 1)) return;
+	if (GetApp().CurrentPlayground.UIConfigs[0].UISequence != CGamePlaygroundUIConfig::EUISequence::Playing) return;
 	
 #if TMNEXT
   	if (vis.RaceStartTime == 0xFFFFFFFF) { // in pre-race mode
