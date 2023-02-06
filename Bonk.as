@@ -33,7 +33,9 @@ float bonkTargetThresh = 0.f;
 float detectedBonkVal = 0.f;
 
 void step() {
+	try {
 	if (VehicleState::GetViewingPlayer() is null) return;
+	} catch { return; }
 	CSceneVehicleVisState@ vis = VehicleState::ViewingPlayerState();
 	if (vis is null) return;
 
