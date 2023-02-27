@@ -23,7 +23,7 @@ void Main() {
 
 Audio::Sample@ bonkSound;
 void init() {
-	@bonkSound = Audio::LoadSample("bonk.mp3");
+	@bonkSound = Audio::LoadSample("bonk.wav");
 }
 
 float prev_speed = 0;
