@@ -10,8 +10,12 @@ float bonkThresh = 64.f;
 [Setting min=0 max=60000 name="Bonk debounce" description="Length (in ms) to cool down before making additional Bonk! sounds."]
 uint bonkDebounce = 500;
 
+[Setting min=0 max=1 name="Bonk! chance" description="Probability of a Bonk! sound occurring once the threshold is met."]
+float bonkSoundChance = 1.0f;
+
 [Setting min=0 max=1 name="Bonk! volume"]
 float bonkSoundGain = 0.4f;
+
 
 void Main() {
 	init();
@@ -82,7 +86,7 @@ void bonk(const float &in curr_acc) {
 	if ((lastBonk + bonkDebounce) > Time::Now) return;
 	
 	lastBonk = Time::Now;
-	if (enableBonkSound) {
+	if (enableBonkSound && Math::Rand(0.0f, 1.0f) <= bonkSoundChance) {
 		Audio::Play(bonkSound, bonkSoundGain);
 		startBonkFlash();
 	}
