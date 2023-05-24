@@ -51,6 +51,17 @@ void step() {
 		prev_speed = 0;
 		lastBonk == Time::Now;
 	}
+
+#if DEPENDENCY_MLFEEDRACEDATA && DEPENDENCY_MLHOOK
+	auto mlf = MLFeed::GetRaceData_V3();
+	auto plf = mlf.GetPlayer_V3(MLFeed::LocalPlayersName);
+	if (plf.spawnStatus != MLFeed::SpawnStatus::Spawned || (plf.LastRespawnRaceTime - plf.CurrentRaceTime) > 0) {
+		prev_speed = 0;
+		lastBonk == Time::Now;
+		return;
+	}
+#endif
+
 #elif MP4||TURBO
   	if (vis.FrontSpeed == 0) { // in pre-race mode hopefully
 		prev_speed = 0;
