@@ -17,6 +17,8 @@ class BonkStateManager {
         @bonkSound = Audio::LoadSample("bonk.wav");
     }
 
+#if TMNEXT
+
     int idx = 0;
 
     bool bonk;
@@ -138,6 +140,5 @@ class BonkStateManager {
             (visState.RLGroundContactMaterial != surface ? 1 : 0) +
             (visState.RRGroundContactMaterial != surface ? 1 : 0);
     }
-
-
+#endif
 }
