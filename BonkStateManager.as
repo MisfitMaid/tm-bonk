@@ -1,3 +1,13 @@
+
+[Setting name="pipe?"]
+bool pipe_enabled = true;
+
+[Setting name="bonk wheels on ground sensitivity (higher is lower)" drag min=1 max=10]
+float wheels_on_the_bus = 2;
+
+[Setting name="bonk wheels off ground sensitivity (higher is lower)" drag min=1 max=10]
+float wheels_off_the_bus = 4;
+
 class BonkStateManager {
     Audio::Sample@ pipeSound;
     Audio::Sample@ bonkSound; 
@@ -6,6 +16,7 @@ class BonkStateManager {
         @pipeSound = Audio::LoadSample("pipe.wav");
         @bonkSound = Audio::LoadSample("bonk.wav");
     }
+
 
     float pi = 3.141592653589793238462643383279502884197;
     float pi2 = pi / 2;
@@ -51,7 +62,6 @@ class BonkStateManager {
         /* 🎶 business logic 🎶 */ 
 
         vec3 v = visState.WorldVel;
-        vec3 vNorm = v.Normalized();
         float vLen = v.Length();
 
         vec4 suspensionParams = vec4(
@@ -78,8 +88,8 @@ class BonkStateManager {
         }
         
         vec3 vdt = v - prevVel; 
-        vdt = vdt - visState.Up * (Math::Dot(vdt, visState.Up));
-
+        float vdtUp = Math::Dot(vdt, visState.Up);
+        vdt = vdt - visState.Up * vdtUp;
         if (Math::Dot(vdt, visState.Dir) > 0) {
             vdt = vdt - visState.Dir * (Math::Dot(vdt, visState.Dir));
         }
@@ -97,7 +107,7 @@ class BonkStateManager {
             (lastPipeTime < Time::Now - 1000) && 
             (prevVelLength > 10) &&
             (vLen > 3) && 
-            vdtL > (vLen * 0.1) && 
+            Math::Abs(vdtUp) > (vLen * 0.1) && 
             pipeCountDown == -1 && 
             (Math::Dot(visState.Up, vec3(0, -1, 0)) > 0) &&
             sumWheelContactCountArr() == 0
@@ -109,10 +119,10 @@ class BonkStateManager {
             (prevVelLength > 10) &&
             (
                 (wheelContactCount == 4 && prevWheelContactCount == 4 && 
-                (vdtdt.Length() > 2))
+                (vdtdt.Length() > wheels_on_the_bus))
                 || 
                 ((wheelContactCount != 4 && prevWheelContactCount != 4) && 
-                (vdtdt.Length() > 4))
+                (vdtdt.Length() > wheels_off_the_bus))
             )
             ) {
             lastBonkTime = Time::Now;
