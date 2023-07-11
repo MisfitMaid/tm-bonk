@@ -131,14 +131,6 @@ class BonkStateManager {
         return r;
     }
 
-    int andContactCheck(CSceneVehicleVisState@ visState, EPlugSurfaceMaterialId surface) {
-        return 
-            (visState.FLGroundContactMaterial == surface ? 1 : 0) +
-            (visState.FRGroundContactMaterial == surface ? 1 : 0) +
-            (visState.RLGroundContactMaterial == surface ? 1 : 0) +
-            (visState.RRGroundContactMaterial == surface ? 1 : 0);
-    }
-
     int notContactCheck(CSceneVehicleVisState@ visState, EPlugSurfaceMaterialId surface) {
         return 
             (visState.FLGroundContactMaterial != surface ? 1 : 0) +
