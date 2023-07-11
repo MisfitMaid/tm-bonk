@@ -26,8 +26,10 @@ void Main() {
 }
 
 Audio::Sample@ bonkSound;
+BonkStateManager bs;
 void init() {
 	@bonkSound = Audio::LoadSample("bonk.wav");
+	bs = BonkStateManager();
 }
 
 float prev_speed = 0;
@@ -85,7 +87,7 @@ void step() {
 	bonkTargetThresh = (bonkThresh + prev_speed * 1.5f);
 	bool mainBonkDetect = curr_acc > bonkTargetThresh;
 #if TMNEXT
-	if (mainBonkDetect && !vis.IsTurbo) bonk(curr_acc);
+	if (mainBonkDetect && !vis.IsTurbo) bs.handleBonkCall(vis);
 #elif MP4||TURBO
 	if (mainBonkDetect) bonk(curr_acc); // IsTurbo not reported by VehicleState wrapper
 #endif
@@ -103,7 +105,7 @@ void bonk(const float &in curr_acc) {
 	}
 }
 
-float g_dt = 0;
+float g_dt = 1;
 void Update(float dt)
 {
 	g_dt = dt;

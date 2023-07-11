@@ -6,7 +6,7 @@ version = "1.2.3"
 siteid = 314
 
 [script]
-dependencies = ["VehicleState"]
+dependencies = [ "VehicleState", "Camera" ]
 optional_dependencies = ["MLHook", "MLFeedRaceData"]
 exports = [ "Export.bonk.as" ]
 module = "bonk"
