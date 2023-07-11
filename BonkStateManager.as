@@ -31,13 +31,7 @@ class BonkStateManager {
     uint64 lastPipeTime = 0;
     vec3 lastBonkVdtdt;
 
-
-    int minGap = 1000; 
-
-    float ROOFHIT_VEL_CHANGE_THRESH = 0.4;
-    
     int prevWheelContactCount;
-    vec4 prevSuspensionParams;
 
     array<int> wheelContactCountArr(10);
 
@@ -57,13 +51,6 @@ class BonkStateManager {
 
         vec3 v = visState.WorldVel;
         float vLen = v.Length();
-
-        vec4 suspensionParams = vec4(
-            visState.FLDamperLen,
-            visState.FRDamperLen, 
-            visState.RLDamperLen,
-            visState.RRDamperLen
-        );
 
         int wheelContactCount = notContactCheck(visState, EPlugSurfaceMaterialId::XXX_Null);
         wheelContactCountArr[idx] = wheelContactCount;
@@ -88,15 +75,13 @@ class BonkStateManager {
             vdt = vdt - visState.Dir * (Math::Dot(vdt, visState.Dir));
         }
 
-        float vdtL = vdt.Length();
         vec3 vdtdt = vdt - prevVdt;
-
-
-
 
         // Case: roofhit
         // Is the force opposite in direction to the up vector? 
         // Also we only want to roofhit when we are pointing down - otherwise it will be overdone and not funny
+        // We also check to make sure we were falling for at least 10 frames beforehand, plus we start this countdown
+        // to ensure that we don't touch the ground with any wheel for 3 frames after. 
         if (
             (lastPipeTime < Time::Now - 1000) && 
             (prevVelLength > 10) &&
@@ -124,13 +109,10 @@ class BonkStateManager {
             startBonkFlash();
             lastBonkVdtdt = vdtdt;
         }
-        // drawVec3(visState, vec3(0, -1, 0), vec4(1, 0, 0, 1));
-
-
+        // drawVec3(visState, lastBonkVdtdt, vec4(1, 0, 0, 1));
         prevVelLength = vLen;
         prevVel = v;
         prevWheelContactCount = wheelContactCount;
-        prevSuspensionParams = suspensionParams;
         prevVdt = vdt;
         idx = (idx + 1) % 10;
         return;
