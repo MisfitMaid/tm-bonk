@@ -17,12 +17,6 @@ class BonkStateManager {
         @bonkSound = Audio::LoadSample("bonk.wav");
     }
 
-
-    float pi = 3.141592653589793238462643383279502884197;
-    float pi2 = pi / 2;
-    float pi4 = pi / 4;
-    float pi10 = pi / 10; 
-
     int idx = 0;
 
     bool bonk;
