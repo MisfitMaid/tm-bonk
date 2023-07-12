@@ -38,6 +38,8 @@ uint64 lastBonk = 0;
 float bonkTargetThresh = 0.f;
 float detectedBonkVal = 0.f;
 
+bool mainBonkDetect;
+
 void step() {
 	try {
 	if (VehicleState::GetViewingPlayer() is null) return;
@@ -85,7 +87,7 @@ void step() {
 		curr_acc *= -1.f;
 	}
 	bonkTargetThresh = (bonkThresh + prev_speed * 1.5f);
-	bool mainBonkDetect = curr_acc > bonkTargetThresh;
+	mainBonkDetect = curr_acc > bonkTargetThresh;
 #if TMNEXT
 	bs.handleBonkCall(vis);
 #elif MP4||TURBO

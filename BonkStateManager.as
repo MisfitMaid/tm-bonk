@@ -3,7 +3,7 @@
 bool pipe_enabled = true;
 
 [Setting name="bonk wheels on ground sensitivity (higher is lower)" drag min=1 max=10]
-float wheels_on_the_bus = 2;
+float wheels_on_the_bus = 4;
 
 [Setting name="bonk wheels off ground sensitivity (higher is lower)" drag min=1 max=10]
 float wheels_off_the_bus = 4;
@@ -108,6 +108,7 @@ class BonkStateManager {
         if (
             (lastBonkTime < Time::Now - 1000) && 
             (prevVelLength > 10) &&
+            mainBonkDetect && 
             (
                 (wheelContactCount == 4 && prevWheelContactCount == 4 && 
                 (vdtdt.Length() > wheels_on_the_bus))
@@ -120,6 +121,8 @@ class BonkStateManager {
             Audio::Play(bonkSound, 0.5);
             startBonkFlash();
             lastBonkVdtdt = vdtdt;
+            if (debug)
+                print("Bonk intensity: " + tostring(lastBonkVdtdt.Length()));
         }
         
         prevVelLength = vLen;
