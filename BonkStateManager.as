@@ -50,6 +50,9 @@ class BonkStateManager {
     /* To be called once per frame. */ 
     void handleBonkCall(CSceneVehicleVisState@ visState) {
         /* 🎶 business logic 🎶 */ 
+        if (getCurrentRunTime() < 1000) {
+            return;
+        }
 
         vec3 v = visState.WorldVel;
         float vLen = v.Length();
@@ -140,5 +143,36 @@ class BonkStateManager {
             (visState.RLGroundContactMaterial != surface ? 1 : 0) +
             (visState.RRGroundContactMaterial != surface ? 1 : 0);
     }
+
+    CSmArenaClient@ getPlayground() {
+        return cast < CSmArenaClient > (GetApp().CurrentPlayground);
+    }
+     
+    int getCurrentGameTime() {
+        return getPlayground().Interface.ManialinkScriptHandler.GameTime;
+    }
+
+    int getCurrentRunTime() {
+        return getCurrentGameTime() - getPlayerStartTime();
+    }
+
+    int getPlayerStartTime() {
+        return getPlayer().StartTime;
+    }
+
+        CSmPlayer@ getPlayer() {
+        auto playground = getPlayground();
+        if (playground!is null) {
+            if (playground.GameTerminals.Length > 0) {
+                CGameTerminal @ terminal = cast < CGameTerminal > (playground.GameTerminals[0]);
+                CSmPlayer @ player = cast < CSmPlayer > (terminal.GUIPlayer);
+                if (player!is null) {
+                    return player;
+                }   
+            }
+        }
+        return null;
+    }
+
 #endif
 }
