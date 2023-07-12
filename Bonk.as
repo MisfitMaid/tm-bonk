@@ -87,7 +87,7 @@ void step() {
 	bonkTargetThresh = (bonkThresh + prev_speed * 1.5f);
 	bool mainBonkDetect = curr_acc > bonkTargetThresh;
 #if TMNEXT
-	if (mainBonkDetect && !vis.IsTurbo) bs.handleBonkCall(vis);
+	bs.handleBonkCall(vis);
 #elif MP4||TURBO
 	if (mainBonkDetect) bonk(curr_acc); // IsTurbo not reported by VehicleState wrapper
 #endif

@@ -8,6 +8,9 @@ float wheels_on_the_bus = 2;
 [Setting name="bonk wheels off ground sensitivity (higher is lower)" drag min=1 max=10]
 float wheels_off_the_bus = 4;
 
+[Setting name="debug"]
+bool debug = false;
+
 class BonkStateManager {
     Audio::Sample@ pipeSound;
     Audio::Sample@ bonkSound; 
@@ -54,6 +57,10 @@ class BonkStateManager {
             return;
         }
 
+        if (debug)
+            drawVec3(visState, lastBonkVdtdt, vec4(1, 0, 0, 1));
+
+
         vec3 v = visState.WorldVel;
         float vLen = v.Length();
 
@@ -93,7 +100,7 @@ class BonkStateManager {
             (vLen > 3) && 
             Math::Abs(vdtUp) > (vLen * 0.1) && 
             pipeCountDown == -1 && 
-            (Math::Dot(visState.Up, vec3(0, -1, 0)) > 0) &&
+            (Math::Dot(visState.Up, vec3(0, -1, 0)) > 0.5) &&
             sumWheelContactCountArr() == 0
             ) {
                 pipeCountDown = 3;
@@ -114,7 +121,7 @@ class BonkStateManager {
             startBonkFlash();
             lastBonkVdtdt = vdtdt;
         }
-        // drawVec3(visState, lastBonkVdtdt, vec4(1, 0, 0, 1));
+        
         prevVelLength = vLen;
         prevVel = v;
         prevWheelContactCount = wheelContactCount;
