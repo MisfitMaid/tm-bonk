@@ -1,16 +1,4 @@
 
-[Setting name="pipe?"]
-bool pipe_enabled = true;
-
-[Setting name="bonk wheels on ground sensitivity (higher is lower)" drag min=1 max=10]
-float wheels_on_the_bus = 4;
-
-[Setting name="bonk wheels off ground sensitivity (higher is lower)" drag min=1 max=10]
-float wheels_off_the_bus = 4;
-
-[Setting name="debug"]
-bool debug = false;
-
 class BonkStateManager {
     Audio::Sample@ pipeSound;
     Audio::Sample@ bonkSound; 
@@ -53,13 +41,8 @@ class BonkStateManager {
     /* To be called once per frame. */ 
     void handleBonkCall(CSceneVehicleVisState@ visState) {
         /* 🎶 business logic 🎶 */ 
-        if (getCurrentRunTime() < 1000) {
-            return;
-        }
-
-        if (debug)
+        if (debug) // i tried really-ish hard to make this actually follow the car lmao, couldn't grok it 
             drawVec3(visState, lastBonkVdtdt, vec4(1, 0, 0, 1));
-
 
         vec3 v = visState.WorldVel;
         float vLen = v.Length();
@@ -76,7 +59,7 @@ class BonkStateManager {
         } else if (pipeCountDown == 0) {
             pipeCountDown = -1;
             lastPipeTime = Time::Now;
-            Audio::Play(pipeSound, 0.3);
+            Audio::Play(pipeSound, pipeSoundGain);
             return;
         }
         
@@ -95,34 +78,36 @@ class BonkStateManager {
         // We also check to make sure we were falling for at least 10 frames beforehand, plus we start this countdown
         // to ensure that we don't touch the ground with any wheel for 3 frames after. 
         if (
-            (lastPipeTime < Time::Now - 1000) && 
+            (lastPipeTime < Time::Now - pipeDebounce) && 
             (prevVelLength > 10) &&
             (vLen > 3) && 
             Math::Abs(vdtUp) > (vLen * 0.1) && 
             pipeCountDown == -1 && 
-            (Math::Dot(visState.Up, vec3(0, -1, 0)) > 0.5) &&
-            sumWheelContactCountArr() == 0
+            (Math::Dot(visState.Up, vec3(0, -1, 0)) > 0.9) &&
+            sumWheelContactCountArr() == 0 && 
+            mainBonkDetect
             ) {
                 pipeCountDown = 3;
             }
         if (
-            (lastBonkTime < Time::Now - 1000) && 
+            (lastBonkTime < Time::Now - bonkDebounce) && 
             (prevVelLength > 10) &&
             mainBonkDetect && 
             (
                 (wheelContactCount == 4 && prevWheelContactCount == 4 && 
-                (vdtdt.Length() > wheels_on_the_bus))
+                (vdtdt.Length() > wheels_contacting_sensitivity))
                 || 
                 ((wheelContactCount != 4 && prevWheelContactCount != 4) && 
-                (vdtdt.Length() > wheels_off_the_bus))
+                (vdtdt.Length() > wheels_in_air_sensitivity))
             )
             ) {
             lastBonkTime = Time::Now;
-            Audio::Play(bonkSound, 0.5);
+            Audio::Play(bonkSound, bonkSoundGain);
             startBonkFlash();
-            lastBonkVdtdt = vdtdt;
-            if (debug)
-                print("Bonk intensity: " + tostring(lastBonkVdtdt.Length()));
+            if (debug) {
+                print("Bonk intensity: " + tostring(vdtdt.Length()));
+                lastBonkVdtdt = vdtdt.Normalized(); // helps make rendering cleaner - this + tracing the length is all that's needed. 
+            }
         }
         
         prevVelLength = vLen;
@@ -131,10 +116,6 @@ class BonkStateManager {
         prevVdt = vdt;
         idx = (idx + 1) % 10;
         return;
-    }
-
-    bool getBonk() {
-        return this.bonk;
     }
 
     int sumWheelContactCountArr() {
@@ -152,36 +133,6 @@ class BonkStateManager {
             (visState.FRGroundContactMaterial != surface ? 1 : 0) +
             (visState.RLGroundContactMaterial != surface ? 1 : 0) +
             (visState.RRGroundContactMaterial != surface ? 1 : 0);
-    }
-
-    CSmArenaClient@ getPlayground() {
-        return cast < CSmArenaClient > (GetApp().CurrentPlayground);
-    }
-     
-    int getCurrentGameTime() {
-        return getPlayground().Interface.ManialinkScriptHandler.GameTime;
-    }
-
-    int getCurrentRunTime() {
-        return getCurrentGameTime() - getPlayerStartTime();
-    }
-
-    int getPlayerStartTime() {
-        return getPlayer().StartTime;
-    }
-
-        CSmPlayer@ getPlayer() {
-        auto playground = getPlayground();
-        if (playground!is null) {
-            if (playground.GameTerminals.Length > 0) {
-                CGameTerminal @ terminal = cast < CGameTerminal > (playground.GameTerminals[0]);
-                CSmPlayer @ player = cast < CSmPlayer > (terminal.GUIPlayer);
-                if (player!is null) {
-                    return player;
-                }   
-            }
-        }
-        return null;
     }
 
 #endif
