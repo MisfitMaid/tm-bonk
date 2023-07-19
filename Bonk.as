@@ -45,6 +45,9 @@ void step() {
 
 	if (GetApp().CurrentPlayground is null || (GetApp().CurrentPlayground.UIConfigs.Length < 1)) return;
 	if (GetApp().CurrentPlayground.UIConfigs[0].UISequence != CGamePlaygroundUIConfig::EUISequence::Playing) return;
+#if MP4
+	if (cast<CTrackManiaPlayer>(GetApp().CurrentPlayground.Players[0]).RaceState == 2) return;
+#endif
 	
 #if TMNEXT
   	if (vis.RaceStartTime == 0xFFFFFFFF) { // in pre-race mode
