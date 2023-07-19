@@ -5,16 +5,34 @@ bool enableBonkSound = true;
 bool enableBonkFlash = true;
 
 [Setting min=0 max=100 name="Bonk threshold" description="How sensitive the Bonk! detection is. If you get many false positives, increase this value."]
-float bonkThresh = 64.f;
+float bonkThresh = 16.f;
 
 [Setting min=0 max=60000 name="Bonk debounce" description="Length (in ms) to cool down before making additional Bonk! sounds."]
 uint bonkDebounce = 500;
+
+[Setting min=0 max=60000 name="Bonk debounce" description="Length (in ms) to cool down before making additional pipe sounds."]
+uint pipeDebounce = 5000;
 
 [Setting min=0 max=1 name="Bonk! chance" description="Probability of a Bonk! sound occurring once the threshold is met."]
 float bonkSoundChance = 1.0f;
 
 [Setting min=0 max=1 name="Bonk! volume"]
 float bonkSoundGain = 0.4f;
+
+[Setting min=0 max=1 name="Pipe volume"]
+float pipeSoundGain = 0.4f;
+
+[Setting name="pipe?"]
+bool pipe_enabled = true;
+
+[Setting name="bonk wheels on ground sensitivity (higher is lower)" drag min=1 max=10]
+float wheels_contacting_sensitivity = 4;
+
+[Setting name="bonk wheels off ground sensitivity (higher is lower)" drag min=1 max=10]
+float wheels_in_air_sensitivity = 4;
+
+[Setting name="debug"]
+bool debug = false;
 
 
 void Main() {
@@ -26,8 +44,10 @@ void Main() {
 }
 
 Audio::Sample@ bonkSound;
+BonkStateManager bs;
 void init() {
 	@bonkSound = Audio::LoadSample("bonk.wav");
+	bs = BonkStateManager();
 }
 
 float prev_speed = 0;
@@ -35,6 +55,8 @@ uint64 lastBonk = 0;
 
 float bonkTargetThresh = 0.f;
 float detectedBonkVal = 0.f;
+
+bool mainBonkDetect;
 
 void step() {
 	try {
@@ -86,9 +108,9 @@ void step() {
 		curr_acc *= -1.f;
 	}
 	bonkTargetThresh = (bonkThresh + prev_speed * 1.5f);
-	bool mainBonkDetect = curr_acc > bonkTargetThresh;
+	mainBonkDetect = curr_acc > bonkTargetThresh;
 #if TMNEXT
-	if (mainBonkDetect && !vis.IsTurbo) bonk(curr_acc);
+	bs.handleBonkCall(vis);
 #elif MP4||TURBO
 	if (mainBonkDetect) bonk(curr_acc); // IsTurbo not reported by VehicleState wrapper
 #endif
@@ -106,7 +128,7 @@ void bonk(const float &in curr_acc) {
 	}
 }
 
-float g_dt = 0;
+float g_dt = 1;
 void Update(float dt)
 {
 	g_dt = dt;
