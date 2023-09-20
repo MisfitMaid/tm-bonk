@@ -7,7 +7,7 @@ class BonkStateManager {
         @bonkSound = Audio::LoadSample("bonk.wav");
     }
 
-#if TURBO||MP4
+#if TMNEXT||MP4
 
     int idx = 0;
 
