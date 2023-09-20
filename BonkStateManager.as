@@ -1,4 +1,3 @@
-#if TURBO||MP4
 class BonkStateManager {
     Audio::Sample@ pipeSound;
     Audio::Sample@ bonkSound; 
@@ -7,6 +6,8 @@ class BonkStateManager {
         @pipeSound = Audio::LoadSample("pipe.wav");
         @bonkSound = Audio::LoadSample("bonk.wav");
     }
+
+#if TURBO||MP4
 
     int idx = 0;
 
@@ -146,6 +147,5 @@ class BonkStateManager {
             (visState.RRGroundContact ? 1 : 0);
     }
 #endif
-
-}
 #endif
+}
