@@ -48,7 +48,7 @@ class BonkStateManager {
 
 #if TMNEXT
         int wheelContactCount = notContactCheck(visState, EPlugSurfaceMaterialId::XXX_Null);
-#elif MP4||TURBO
+#elif MP4
         int wheelContactCount = notContactCheck(visState);
 #endif
         wheelContactCountArr[idx] = wheelContactCount;
@@ -129,6 +129,7 @@ class BonkStateManager {
         print(r);
         return r;
     }
+#endif
 
 #if TMNEXT
     int notContactCheck(CSceneVehicleVisState@ visState, EPlugSurfaceMaterialId surface) {
@@ -146,6 +147,5 @@ class BonkStateManager {
             (visState.RLGroundContact ? 1 : 0) +
             (visState.RRGroundContact ? 1 : 0);
     }
-#endif
 #endif
 }
