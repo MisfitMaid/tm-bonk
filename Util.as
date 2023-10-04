@@ -1,3 +1,4 @@
+#if TMNEXT
 bool isIceSurface(EPlugSurfaceMaterialId surface) {
   return (surface == CSceneVehicleVisState::EPlugSurfaceMaterialId::Ice ||
     surface == CSceneVehicleVisState::EPlugSurfaceMaterialId::RoadIce ||
@@ -32,3 +33,4 @@ bool isPlasticDirtOrGrass(EPlugSurfaceMaterialId surface) {
     isDirtSurface(surface) ||
     isGrassSurface(surface);
 }
+#endif

@@ -1,4 +1,3 @@
-
 class BonkStateManager {
     Audio::Sample@ pipeSound;
     Audio::Sample@ bonkSound; 
@@ -8,7 +7,7 @@ class BonkStateManager {
         @bonkSound = Audio::LoadSample("bonk.wav");
     }
 
-#if TMNEXT
+#if TMNEXT||MP4
 
     int idx = 0;
 
@@ -47,7 +46,11 @@ class BonkStateManager {
         vec3 v = visState.WorldVel;
         float vLen = v.Length();
 
+#if TMNEXT
         int wheelContactCount = notContactCheck(visState, EPlugSurfaceMaterialId::XXX_Null);
+#elif MP4
+        int wheelContactCount = notContactCheck(visState);
+#endif
         wheelContactCountArr[idx] = wheelContactCount;
 
         if (pipeCountDown > 0) {
@@ -126,7 +129,9 @@ class BonkStateManager {
         print(r);
         return r;
     }
+#endif
 
+#if TMNEXT
     int notContactCheck(CSceneVehicleVisState@ visState, EPlugSurfaceMaterialId surface) {
         return 
             (visState.FLGroundContactMaterial != surface ? 1 : 0) +
@@ -134,6 +139,13 @@ class BonkStateManager {
             (visState.RLGroundContactMaterial != surface ? 1 : 0) +
             (visState.RRGroundContactMaterial != surface ? 1 : 0);
     }
-
+#elif MP4
+    int notContactCheck(CSceneVehicleVisState@ visState) {
+        return
+            (visState.FLGroundContact ? 1 : 0) +
+            (visState.FRGroundContact ? 1 : 0) +
+            (visState.RLGroundContact ? 1 : 0) +
+            (visState.RRGroundContact ? 1 : 0);
+    }
 #endif
 }
