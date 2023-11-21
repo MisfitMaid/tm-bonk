@@ -1,9 +1,7 @@
 class BonkStateManager {
-    Audio::Sample@ pipeSound;
     Audio::Sample@ bonkSound; 
 
     BonkStateManager() {
-        @pipeSound = Audio::LoadSample("pipe.wav");
         @bonkSound = Audio::LoadSample("bonk.wav");
     }
 
@@ -12,7 +10,6 @@ class BonkStateManager {
     int idx = 0;
 
     bool bonk;
-    bool pipe;
 
     vec3 prevVel;
     vec3 prevVelNorm;
@@ -20,14 +17,11 @@ class BonkStateManager {
     vec3 prevVdt;
 
     uint64 lastBonkTime;
-    uint64 lastPipeTime = 0;
     vec3 lastBonkVdtdt;
 
     int prevWheelContactCount;
 
     array<int> wheelContactCountArr(10);
-
-    int pipeCountDown = -1;
 
     void drawVec3(CSceneVehicleVisState@ visState, vec3 v, vec4 c) {
         nvg::BeginPath();
@@ -52,19 +46,6 @@ class BonkStateManager {
         int wheelContactCount = notContactCheck(visState);
 #endif
         wheelContactCountArr[idx] = wheelContactCount;
-
-        if (pipeCountDown > 0) {
-            if (wheelContactCount == 0) {
-                pipeCountDown -= 1;
-            } else {
-                pipeCountDown = -1;
-            } 
-        } else if (pipeCountDown == 0) {
-            pipeCountDown = -1;
-            lastPipeTime = Time::Now;
-            Audio::Play(pipeSound, pipeSoundGain);
-            return;
-        }
         
         vec3 vdt = v - prevVel; 
         float vdtUp = Math::Dot(vdt, visState.Up);
@@ -75,23 +56,6 @@ class BonkStateManager {
 
         vec3 vdtdt = vdt - prevVdt;
 
-        // Case: roofhit
-        // Is the force opposite in direction to the up vector? 
-        // Also we only want to roofhit when we are pointing down - otherwise it will be overdone and not funny
-        // We also check to make sure we were falling for at least 10 frames beforehand, plus we start this countdown
-        // to ensure that we don't touch the ground with any wheel for 3 frames after. 
-        if (
-            (lastPipeTime < Time::Now - pipeDebounce) && 
-            (prevVelLength > 10) &&
-            (vLen > 3) && 
-            Math::Abs(vdtUp) > (vLen * 0.1) && 
-            pipeCountDown == -1 && 
-            (Math::Dot(visState.Up, vec3(0, -1, 0)) > 0.9) &&
-            sumWheelContactCountArr() == 0 && 
-            mainBonkDetect
-            ) {
-                pipeCountDown = 3;
-            }
         if (
             (lastBonkTime < Time::Now - bonkDebounce) && 
             (prevVelLength > 10) &&

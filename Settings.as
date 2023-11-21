@@ -22,14 +22,5 @@ float bonkSoundChance = 1.0f;
 [Setting category="Bonk!s" min=0 max=1 name="Bonk! volume"]
 float bonkSoundGain = 0.4f;
 
-[Setting category="Pipes" min=0 max=60000 name="Pipe debounce" description="Length (in ms) to cool down before making additional pipe sounds."]
-uint pipeDebounce = 5000;
-
-[Setting category="Pipes" name="pipe?"]
-bool pipe_enabled = false;
-
-[Setting category="Pipes" min=0 max=1 name="Pipe volume"]
-float pipeSoundGain = 0.4f;
-
 [Setting name="debug" hidden]
 bool debug = false;

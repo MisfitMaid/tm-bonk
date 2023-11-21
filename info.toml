@@ -2,11 +2,11 @@
 name = "Bonk!"
 author = "MisfitMaid"
 category = "Audio"
-version = "1.3"
+version = "1.4"
 siteid = 314
 
 [script]
-dependencies = [ "VehicleState", "Camera" ]
+dependencies = ["VehicleState", "Camera"]
 optional_dependencies = ["MLHook", "MLFeedRaceData"]
-exports = [ "Export.bonk.as" ]
+exports = ["Export.bonk.as"]
 module = "bonk"
