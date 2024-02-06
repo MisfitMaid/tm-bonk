@@ -1,9 +1,4 @@
 class BonkStateManager {
-    Audio::Sample@ bonkSound; 
-
-    BonkStateManager() {
-        @bonkSound = Audio::LoadSample("bonk.wav");
-    }
 
 #if TMNEXT||MP4
 
