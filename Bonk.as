@@ -9,7 +9,12 @@ void Main() {
 Audio::Sample@ bonkSound;
 BonkStateManager bs;
 void init() {
-	@bonkSound = Audio::LoadSample("bonk.wav");
+	if (IO::FileExists(IO::FromStorageFolder("custombonk.wav"))) {
+		trace("Custom bonk sound detected.");
+		@bonkSound = Audio::LoadSample(IO::FromStorageFolder("custombonk.wav"));
+	} else {
+		@bonkSound = Audio::LoadSample("bonk.wav");
+	}
 	bs = BonkStateManager();
 }
 
