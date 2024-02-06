@@ -48,10 +48,12 @@ void step() {
 #if DEPENDENCY_MLFEEDRACEDATA && DEPENDENCY_MLHOOK
 	auto mlf = MLFeed::GetRaceData_V3();
 	auto plf = mlf.GetPlayer_V3(MLFeed::LocalPlayersName);
-	if (plf.spawnStatus != MLFeed::SpawnStatus::Spawned || (plf.LastRespawnRaceTime - plf.CurrentRaceTime) > 0) {
-		prev_speed = 0;
-		lastBonk == Time::Now;
-		return;
+	if (plf !is null) {
+		if (plf.spawnStatus != MLFeed::SpawnStatus::Spawned || (plf.LastRespawnRaceTime - plf.CurrentRaceTime) > 0) {
+			prev_speed = 0;
+			lastBonk == Time::Now;
+			return;
+		}
 	}
 #endif
 
