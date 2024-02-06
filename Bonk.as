@@ -9,11 +9,27 @@ void Main() {
 Audio::Sample@ bonkSound;
 BonkStateManager bs;
 void init() {
+	string filePath = "bonk.wav";
+	
 	if (IO::FileExists(IO::FromStorageFolder("custombonk.wav"))) {
+		filePath = IO::FromStorageFolder("custombonk.wav");
+	}
+	if (IO::FileExists(IO::FromStorageFolder("custombonk.mp3"))) {
+		filePath = IO::FromStorageFolder("custombonk.mp3");
+	}
+	if (IO::FileExists(IO::FromStorageFolder("custombonk.ogg"))) {
+		filePath = IO::FromStorageFolder("custombonk.ogg");
+	}
+
+	if (filePath != "bonk.wav") {
 		trace("Custom bonk sound detected.");
-		@bonkSound = Audio::LoadSample(IO::FromStorageFolder("custombonk.wav"));
+		trace(filePath);
+		IO::File file(filePath, IO::FileMode::Read);
+		bool stream = file.Size() > 512*1024;
+		@bonkSound = Audio::LoadSample(file.Read(file.Size()), stream);
+		file.Close();
 	} else {
-		@bonkSound = Audio::LoadSample("bonk.wav");
+		@bonkSound = Audio::LoadSample(filePath);
 	}
 	bs = BonkStateManager();
 }
