@@ -17,8 +17,8 @@ void init() {
 	if (IO::FileExists(IO::FromStorageFolder("custombonk.mp3"))) {
 		filePath = IO::FromStorageFolder("custombonk.mp3");
 	}
-	if (IO::FileExists(IO::FromStorageFolder("custombonk.ogg"))) {
-		filePath = IO::FromStorageFolder("custombonk.ogg");
+	if (IO::FileExists(IO::FromStorageFolder("custombonk.flac"))) {
+		filePath = IO::FromStorageFolder("custombonk.flac");
 	}
 
 	if (filePath != "bonk.wav") {
