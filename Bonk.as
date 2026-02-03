@@ -139,8 +139,8 @@ void Render() {
 	if (!enableBonkFlash) return;
 	if (lastBonkFlash + 400 < Time::Now) return;
 
-	float w = float(Draw::GetWidth());
-	float h = float(Draw::GetHeight());
+	float w = float(Display::GetWidth());
+	float h = float(Display::GetHeight());
 
 	nvg::BeginPath();
 	nvg::MoveTo(vec2(0,0));
